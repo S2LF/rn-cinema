@@ -18,7 +18,7 @@ export default function Home({ navigation }) {
         <Text style={[tw.textBlue500, tw.textXl]}>Title</Text>
         </View>
         <View style={[tw.flex1, tw.p2, tw.wFull, tw.hFull, tw.itemsCenter, tw.justifyCenter]}>
-        <TextInput style={[tw.textBlack, tw.border, tw.p3, tw.wFull, tw.rounded, tw.m1, tw.textBase, valueError && {borderColor:'red'}]} 
+        <TextInput style={[tw.textBlack, tw.bgWhite ,tw.border, tw.p3, tw.wFull, tw.rounded, tw.m1, tw.textBase, valueError && {borderColor:'red'}]} 
                 placeholder="Je recherche..." 
                 onChangeText={text => {
                     setValue(text)
@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
                     }}/>
         <View style={[tw.border, tw.rounded, tw.m1, tw.wFull]}>
             <Picker
-            style={[tw.border, tw.wFull]}
+            style={[tw.border, tw.bgWhite, tw.wFull]}
             itemStyle={[tw.textXl]}
             selectedValue={select}
             onValueChange={(itemValue) => {
@@ -36,7 +36,7 @@ export default function Home({ navigation }) {
             }}>
                 <Picker.Item label="Film" value="Film" />
                 <Picker.Item label="Personne" value="Personne" />
-                <Picker.Item label="Genre" value="Genre" />
+                <Picker.Item label="Série" value="Série" />
             </Picker>
         </View>
         {valueError !== '' && (

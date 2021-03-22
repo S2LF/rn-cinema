@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@fawazahmed/react-native-read-more": "^2.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-picker/picker": "1.9.2",
     "@react-navigation/native": "^5.9.3",
@@ -18,12 +19,15 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+    "react-native-collapsible": "^1.5.3",
+    "react-native-dotenv": "^2.5.3",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.2",
     "react-native-tailwindcss": "^1.1.11",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "s-age": "^1.1.2"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
