@@ -67,21 +67,42 @@ function PersonRow({name, profile_path, index, id, known_for}){
                 <View style={[tw.flex1, tw.alignCenter, tw.justifyAround, tw.pL2, tw.pR2]}>
                     <Text><Text style={[tw.underline]}>Né(e) le</Text>: { infos.birthday ? infos.birthday.split('-').reverse().join('/') : ' - '} {!infos.deathday && infos.birthday ? `(${(age(infos.birthday.split('-')[0]))} ans)` : ''}</Text>
                     { infos.deathday ? <Text><Text style={[tw.underline]}>Décès le</Text>: { infos.deathday ? infos.deathday.split('-').reverse().join('/') : ' - '}</Text> : <Text>{''}</Text>}
+
                     <View>
-                        <Text>
-                            <Text style={[tw.underline]}>Connus pour</Text>:{"\n"}
+                            <Text><Text style={[tw.underline]}>Connus pour</Text><Text> :</Text></Text>
                             { known_for && known_for.map((el) => (
                                 (el.media_type) === "tv" ? 
                                 (
-                                    <Text key={el.id}>{el.name}{"\n"}</Text>
+                                    <View key={el.id}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('SerieShow', {
+                                                id: el.id
+                                            });
+                                        }}
+                                    >
+                                        <Text  style={[tw.textBlue600, tw.fontBold]}>{el.name}</Text>
+                                    </TouchableOpacity>
+                                    </View>
                                 ) : (
-                                    <Text key={el.id}>{el.title}{"\n"}</Text>
+                                    <View key={el.id}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('FilmShow', {
+                                                id: el.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.textBlue600, tw.fontBold]}>{el.title}</Text>
+                                    </TouchableOpacity>
+                                    </View>
                                 )
                             )) 
                             }
-                        </Text>
                     </View>
-                    <TouchableOpacity activeOpacity={0.8} style={[tw.bgGreen400, tw.p1,tw.itemsCenter, tw.rounded]} onPress={() => {
+                    <TouchableOpacity activeOpacity={0.8} style={[tw.pT2, tw.bgGreen400, tw.p1,tw.itemsCenter, tw.rounded]} onPress={() => {
                         // setModalVisible(true);
                         navigation.push('PersonShow', {
                             id: id

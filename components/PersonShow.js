@@ -6,12 +6,15 @@ import { tw } from 'react-native-tailwindcss';
 import ReadMore from '@fawazahmed/react-native-read-more';
 import age from 's-age';
 import Collapsible from "react-native-collapsible";
+import { useNavigation } from '@react-navigation/native';
 
 import { DEFAULT_MOVIE_POSTER } from '../assets/img/index';
 import RenderSeparator from "./RenderSeparator";
 import { ScrollView } from "react-native-gesture-handler";
 
 function PersonShow({ route }){
+
+    const navigation = useNavigation();
 
     const { id } = route.params;
 
@@ -85,9 +88,16 @@ function PersonShow({ route }){
                 {mainFilmsFilter.slice(0,3).map((item, index) => (
                     item !== undefined && (
                         <View key={item.id*index} style={[tw.flex1, tw.alignCenter, tw.pT2]}>
-                            <Text style={[tw.textCenter, tw.textLg, tw.fontBold]}>
-                                {item.name}{item.title}
-                            </Text>
+                                { item.name && <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                                    navigation.push('SerieShow', {
+                                        id: item.id
+                                    });
+                                }}><Text style={[tw.fontBold, tw.textCenter, tw.textLg, tw.textBlue600]}>{item.name}</Text></TouchableOpacity> }
+                                { item.title && <TouchableOpacity activeOpacity={0.8} onPress={() => {
+                                    navigation.push('FilmShow', {
+                                        id: item.id
+                                    });
+                                }}><Text style={[tw.fontBold, tw.textCenter, tw.textLg, tw.textBlue600]}>{item.title}</Text></TouchableOpacity> }
                             <View  style={[tw.mT2, tw.selfCenter]}>
                                 { item.poster_path ?
                                     <Image source={{ uri: `https://image.tmdb.org/t/p/w150_and_h225_bestv2${item.poster_path}` }} style={{ width: 75, height: 75, resizeMode: "contain"}} />

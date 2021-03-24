@@ -90,7 +90,16 @@ export default function SerieShow({ route }){
                             />
                         }
                     </View>
-                    <Text>{el.name}</Text>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                            navigation.push('PersonShow', {
+                                id: producer[0].id
+                            });
+                        }}
+                    >
+                        <Text  style={[tw.textBlue600, tw.fontBold]}> {el.name }</Text>
+                    </TouchableOpacity>
                 </View>
             )) : <Text> - </Text>}
             <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Acteurs principaux{"\n"}</Text>
@@ -117,17 +126,14 @@ export default function SerieShow({ route }){
                             });
                         }}
                     >
-                        <Text> {item.name }</Text>
+                        <Text style={[tw.textBlue600, tw.fontBold]}> {item.name }</Text>
                     </TouchableOpacity>
                         </View>
                         <Text><Text style={[tw.underline]}>Rôle</Text>: {item.character}</Text>
                     </View>
-
-                    
-
                 </View>
             )) : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Genres{"\n"}</Text>
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.pB2]}>Genres{"\n"}</Text>
             { infos.genres.length ?
             <Text style={[tw.textCenter]}>
                 {infos.genres.map((el, index) => (
@@ -144,21 +150,44 @@ export default function SerieShow({ route }){
                     {crew.length > 0&& (
                     <Collapsible collapsed={isCollapsedChildCast}>
                         {cast.length && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item) => (
-                            <View key={item.id} style={[tw.p1]}>
-                                <Text style={[ tw.textCenter]}><Text style={[tw.fontBold]}>{item.name}</Text> dans le rôle de : <Text style={[tw.fontBold]}>{item.character ?? ' - '}</Text></Text>
+                            <View key={item.id} style={[tw.p1, tw.textCenter]}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('PersonShow', {
+                                                id: item.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.fontBold, tw.textBlue600]}>{item.name}</Text>
+                                    </TouchableOpacity><Text> dans le rôle de : </Text><Text style={[tw.fontBold]}>{item.character ?? ' - '}</Text>
+                                </View>
                                 <RenderSeparator/>
                             </View>
                         ))}
                     </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8}>
+                    <TouchableOpacity activeOpacity={0.8}   style={[ tw.p2, tw.m2]}>
                         <Text style={[tw.bgGreen500, styles.button, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Équipe technique et de production ({crew.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
                         <Collapsible collapsed={isCollapsedChildCrew}>
                             {crew.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
-                                <View key={item.id*index} style={[tw.p1]}>
-                                    <Text style={[ tw.textCenter]}><Text style={[tw.fontBold]}>{item.job}</Text>{"\n"}{item.name ?? ' - '}</Text>
+                                <View key={item.id*index}>
+                                    <View style={[tw.textCenter, tw.selfCenter]}>
+                                        <Text  style={[tw.textCenter, tw.selfCenter]}>{item.job}</Text>
+                                        <TouchableOpacity
+                                            activeOpacity={0.8}
+                                            onPress={() => {
+                                                navigation.push('PersonShow', {
+                                                    id: item.id
+                                                });
+                                            }}
+                                        >
+                                            <Text style={[tw.fontBold, tw.textBlue600,tw.textCenter, tw.selfCenter]}>{item.name ?? ' - '}</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                     <RenderSeparator/>
                                 </View>
                             ))}

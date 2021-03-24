@@ -51,11 +51,22 @@ function SerieRow({poster_path, title, release_date, index, id}){
                 )}
                 <View style={[tw.flex1, tw.alignCenter, tw.justifyAround, tw.pL2, tw.pR2]}>
                     <Text><Text style={[tw.underline]}>Année de sortie</Text>: {release_date && release_date.split('-')[0]}</Text>
-                    <Text><Text style={[tw.underline]}>Créateur(s)</Text>:{"\n"}
+                    <Text><Text style={[tw.underline]}>Créateur(s)</Text>:</Text>
                     {infos.created_by.length ? infos.created_by.map((el) => (
-                        <Text key={el.id}>{el.name}{"\n"}</Text> 
-                    )) : <Text> - </Text>}</Text>
-                    <View>
+                        <View  key={el.id} style={tw.flexRow}>
+                            <TouchableOpacity
+                                activeOpacity={0.8}
+                                onPress={() => {
+                                    navigation.push('PersonShow', {
+                                        id: el.id
+                                    });
+                                }}
+                            >
+                                <Text style={[tw.textBlue600, tw.fontBold]}>{el.name}</Text>
+                            </TouchableOpacity>
+                        </View> 
+                    )) : <Text> - </Text>}
+                    <View  style={[tw.pB2]}>
                         <Text>
                             <Text style={[tw.underline]}>Genres</Text>:{"\n"}
                             { infos.genres && infos.genres.map((el, index) => (

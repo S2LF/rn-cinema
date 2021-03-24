@@ -72,7 +72,7 @@ function FilmRow({ poster_path, title, release_date, index, id}){
                             </TouchableOpacity>
                         ) : (<Text> - </Text>)}
                     </View>
-                    <View>
+                    <View style={[tw.pB2]}>
                         <Text>
                             <Text style={[tw.underline]}>Genres</Text>:{"\n"}
                             { infos.genres && infos.genres.map((el, index) => (
