@@ -14,18 +14,11 @@ import RenderSeparator from "./RenderSeparator";
 
 function List({ route }) {
     
-    // https://api.themoviedb.org/3/search/movie?api_key=6a0bc0546f0c4bea10345001c61a431f&query='star wars'&language=fr-FR
-
     const [ result, setResult ] = useState([])
     const [ loading, setLoading ] = useState(true);
 
-    const url = 'https://api.themoviedb.org/3/'
 
-    // if(film.poster_path == null){
-    //     oneListFilm +=("<img class='img_default' src='default-movie.png'><br>")
-    // } else {
-    //     oneListFilm +=("<img src='https://image.tmdb.org/t/p/w150_and_h225_bestv2"+film.poster_path+"'><br>")
-    // }
+    const url = 'https://api.themoviedb.org/3/'
 
     const { search, type } = route.params;
     useEffect(() => {
@@ -40,7 +33,6 @@ function List({ route }) {
                 case 'Personne':
                     const resultPerson = await axios.get(`${url}search/person?api_key=${API_KEY}&query=${search}&language=fr-FR`);
                     setResult(resultPerson.data.results);
-                    // console.log(resultPerson.data.results);
                     setLoading(false);
                     break;
                 case 'Série':
@@ -69,7 +61,7 @@ function List({ route }) {
                 <View style={[tw.shadow, tw.bgWhite, tw.p2]} >
                     <Text style={[tw.textCenter]}>{type} : {search}</Text>
                 </View>
-                { result.length ? (
+                { result.length > 0 ? (
                     <FlatList 
                         data={result}
                         keyExtractor={(item) => `list-item-${item.id}`}
@@ -95,7 +87,7 @@ function List({ route }) {
                 <View style={[tw.shadow, tw.bgWhite, tw.p2]} >
                         <Text style={[tw.textCenter]}>{type} : {search}</Text>
                 </View>
-                { result.length ? (
+                { result.length > 0 ? (
                     <FlatList
                         data={result}
                         keyExtractor={(item) => `list-item-${item.id}`}
@@ -121,7 +113,7 @@ function List({ route }) {
                 <View style={[tw.shadow, tw.bgWhite, tw.p2]} >
                     <Text style={[tw.textCenter]}>{type} : {search}</Text>
                 </View>
-                { result.length ? (
+                { result.length > 0 ? (
                     <FlatList 
                         data={result}
                         keyExtractor={(item) => `list-item-${item.id}`}

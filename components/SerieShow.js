@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Image, Text, View, ActivityIndicator, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { Image, Text, View, ActivityIndicator, TouchableOpacity, ScrollView, StyleSheet, Modal, TouchableHighlight } from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
 import { tw } from 'react-native-tailwindcss';
@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { DEFAULT_MOVIE_POSTER } from '../assets/img/index';
 import { DEFAULT_USER_POSTER } from '../assets/img/index';
 import RenderSeparator from "./RenderSeparator";
+import ReadMore from "@fawazahmed/react-native-read-more";
 
 
 export default function SerieShow({ route }){
@@ -25,6 +26,7 @@ export default function SerieShow({ route }){
     const [crew, setCrew] = useState([]);
     const [isCollapsedChildCast, setIsCollapsedChildCast ] = useState(true);
     const [isCollapsedChildCrew, setIsCollapsedChildCrew ] = useState(true);
+    const [modal, setModal] = useState(false);
 
     
 
@@ -53,32 +55,58 @@ export default function SerieShow({ route }){
             </>
         ) : (
         <ScrollView >
-            <View style={[styles.centeredView, tw.selfCenter, tw.pL5, tw.pR5]}>
+            <View style={[styles.centeredView, tw.selfCenter, tw.pL5, tw.pR5, tw.mAuto]}>
             { infos.name ?
-                <Text style={[tw.pT2, tw.fontBold, tw.text2xl , {marginBottom: 15, textAlign: "center"}]}>{infos.title}</Text>
+                <Text style={[tw.pT2, tw.fontBold, tw.text2xl , {marginBottom: 15, textAlign: "center"}]}>{infos.name}</Text>
             : <Text  style={[tw.pT2, tw.fontBold, tw.text2xl , {marginBottom: 15, textAlign: "center"}]}>Pas de titre</Text> }
             { infos.poster_path && ( 
-                <Image
-                    source={{ uri: `https://image.tmdb.org/t/p/w150_and_h225_bestv2${infos.poster_path}`}}
-                    style={{ width: 300, height: 300, resizeMode: "contain", paddingBottom: 10 }}
-                />
+                <>
+                <TouchableHighlight style={{padding:0, margin:0}} onPress={() => setModal(!modal)}>
+                    <Image
+                        source={{ uri: `https://image.tmdb.org/t/p/w300${infos.poster_path}`}}
+                        style={{ width: 200, height: 300, padding: 0, margin:0, resizeMode: "contain" }}
+                    />
+                </TouchableHighlight>
+                <Modal
+                    animationType="fade"
+                    style={[tw.bgGrey900]}
+                    visible={modal}
+                >
+                    <View style={[styles.modalCenteredView]}>
+                        <TouchableHighlight
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setModal(!modal)}
+                        >
+                            <Text style={styles.textStyle}>Fermer</Text>
+                        </TouchableHighlight>
+                        <View style={{elevation: 5, width: '100%', height: "100%"}}>
+                            <Image
+                                source={{ uri: `https://image.tmdb.org/t/p/original${infos.poster_path}`}}
+                                style={{ width: '100%', height: "100%", padding: 0, resizeMode: "contain" }}
+                            />
+                        </View>
+                    </View>
+                </Modal>
+            </>
             )}
             <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Synopsis</Text>
             {infos.overview ?
-            <Text>{"\n"}{ infos.overview }</Text>
+            <ReadMore seeLessText={'Voir moins'} seeMoreText={'Voir plus'} seeLessStyle={{color: '#3182ce', fontWeight: 'bold'}} seeMoreStyle={{color: '#3182ce', fontWeight: 'bold'}} numberOfLines={6}>
+                { infos.overview }
+            </ReadMore>
             : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Première diffusion{"\n"}</Text>
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Première diffusion</Text>
             {infos.first_air_date ?
                 <Text style={[tw.textLg]}>{ infos.first_air_date.split('-')[0] }</Text>
             : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Pays de production{"\n"}</Text>
-            {infos.production_countries.length ?
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Pays de production</Text>
+            {infos.production_countries.length > 0 ?
                 infos.production_countries.map((item) => (
                     <Text key={item.iso_3166_1}>{item.name}</Text>
                 ))
             : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Créateur(s){"\n"}</Text>
-            {infos.created_by.length ? infos.created_by.map((el) => (
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Créateur(s)</Text>
+            {infos.created_by.length > 0 ? infos.created_by.map((el) => (
                 <View key={el.id} style={[tw.mT2, tw.wFull, tw.textCenter, tw.alignCenter]}>
                     <View style={[tw.selfCenter]}>
                         {el.profile_path ? 
@@ -102,8 +130,8 @@ export default function SerieShow({ route }){
                     </TouchableOpacity>
                 </View>
             )) : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Acteurs principaux{"\n"}</Text>
-            {cast.length ? cast.slice(0,3).map((item) => (
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Acteurs principaux</Text>
+            {cast.length > 0 ? cast.slice(0,3).map((item) => (
                 <View key={item.id} style={[tw.flex1, tw.alignCenter]}>
                     <View  style={[tw.mT2, tw.selfCenter]}>
                     { item.profile_path ?
@@ -133,23 +161,24 @@ export default function SerieShow({ route }){
                     </View>
                 </View>
             )) : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.pB2]}>Genres{"\n"}</Text>
-            { infos.genres.length ?
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.pB2]}>Genres</Text>
+            { infos.genres.length > 0 ?
             <Text style={[tw.textCenter]}>
                 {infos.genres.map((el, index) => (
                     (index+1 == infos.genres.length) ? el.name : el.name+' - '
                 ))}
-            {"\n"}</Text>
-            : <Text> - {"\n"}</Text>}
-            {(cast.length || crew.length) && (
+            </Text>
+            : <Text> - </Text>}
+            {(cast.length > 0 || crew.length > 0) && (
                 <View  style={[tw.pB10]}>
                     <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Casting, équipe technique et de production ({cast.length+crew.length})</Text>
-                    <TouchableOpacity activeOpacity={0.8}  style={[ tw.p2, tw.m2]}>
-                        <Text style={[ tw.bgGreen500, styles.button, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>Casting ({cast.length})</Text>
+                    <TouchableOpacity activeOpacity={0.8}  style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[ tw.bgGreen500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>Casting ({cast.length})</Text>
                     </TouchableOpacity>
-                    {crew.length > 0&& (
+                    {crew.length > 0 && (
                     <Collapsible collapsed={isCollapsedChildCast}>
-                        {cast.length && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item) => (
+                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
+                        {cast.length > 0 && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item) => (
                             <View key={item.id} style={[tw.p1, tw.textCenter]}>
                                 <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
                                     <TouchableOpacity
@@ -166,12 +195,14 @@ export default function SerieShow({ route }){
                                 <RenderSeparator/>
                             </View>
                         ))}
+                        </View>
                     </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8}   style={[ tw.p2, tw.m2]}>
-                        <Text style={[tw.bgGreen500, styles.button, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Équipe technique et de production ({crew.length})</Text>
+                    <TouchableOpacity activeOpacity={0.8}   style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[tw.bgGreen500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Équipe technique et de production ({crew.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
+                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw._mT4, tw.rounded ]} >
                         <Collapsible collapsed={isCollapsedChildCrew}>
                             {crew.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
                                 <View key={item.id*index}>
@@ -192,6 +223,7 @@ export default function SerieShow({ route }){
                                 </View>
                             ))}
                         </Collapsible>
+                        </View>
                     )}
                 </View>
             )}
@@ -210,23 +242,22 @@ const styles = StyleSheet.create({
       alignItems: "center",
       padding: 5
     },
-    modalView: {
-      margin: 10,
-      backgroundColor: "white",
+    modalCenteredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 5,
+        backgroundColor: "#1a202c",
+        paddingTop: 30,
+    },
+    otherButton: {
       borderRadius: 20,
       padding: 10,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5
+      elevation: 2
     },
     button: {
-      borderRadius: 20,
+    //   borderRadius: 20,
+
       padding: 10,
       elevation: 2
     },
@@ -234,15 +265,21 @@ const styles = StyleSheet.create({
       backgroundColor: "#F194FF",
     },
     buttonClose: {
-      backgroundColor: "#2196F3",
+    //   backgroundColor: "#2196F3",
+    // marginTop: 100,
+    // marginBottom: -50,
+    borderWidth: 1,
+    borderColor: 'white',
+    elevation: 6, 
     },
     textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center"
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        // marginBottom: -50,
     },
     modalText: {
-      marginBottom: 15,
+    //   marginBottom: 15,
       textAlign: "center"
     }
   });

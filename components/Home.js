@@ -1,8 +1,8 @@
 import { Picker } from '@react-native-picker/picker';
-import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { tw } from 'react-native-tailwindcss';
+import HomeSvg from './svg/HomeSvg';
 
 export default function Home({ navigation }) {
     const [value, setValue] = useState('');
@@ -35,8 +35,8 @@ export default function Home({ navigation }) {
                 setSelect(itemValue)
             }}>
                 <Picker.Item label="Film" value="Film" />
-                <Picker.Item label="Personne" value="Personne" />
                 <Picker.Item label="Série" value="Série" />
+                <Picker.Item label="Personne" value="Personne" />
             </Picker>
         </View>
         {valueError !== '' && (
@@ -45,18 +45,11 @@ export default function Home({ navigation }) {
         </View>
         </ScrollView>
         <View style={[tw.wFull, tw.flexCol, tw.flex1, tw.selfEnd ]}>
-        {/* <Button
-        title='Go to About'
-        onPress={() => {
-            
-        }} 
-        />*/}
         <TouchableOpacity activeOpacity={0.8} style={[tw.bgIndigo400,tw.itemsCenter, tw.wFull, tw.flexCol, {position:'absolute', bottom:0}]} onPress={() => {
             if(value === ''){
             setValueError('Veuillez saisir un élément de recherche.');
             } else {
             setValueError('');
-            // alert(`rechercher: ${value} | style: ${select} `);
             navigation.push('List', {
                 search: value,
                 type: select

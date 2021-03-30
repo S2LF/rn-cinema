@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, Text, View, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import { Image, Text, View, TouchableOpacity, ActivityIndicator, StyleSheet, Modal, TouchableHighlight } from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
 import { tw } from 'react-native-tailwindcss';
@@ -19,12 +19,17 @@ function PersonShow({ route }){
     const { id } = route.params;
 
     const [ loading, setLoading ] = useState(true);
+    const [modal, setModal] = useState(false);
 
     const [infos, setInfos] = useState([]);
     const [cast, setCast] = useState([]);
     const [crew, setCrew] = useState([]);
+    const [tvCast, setTvCast] = useState([]);
+    const [tvCrew, setTvCrew] = useState([]);
     const [isCollapsedChildCast, setIsCollapsedChildCast ] = useState(true);
     const [isCollapsedChildCrew, setIsCollapsedChildCrew ] = useState(true);
+    const [isCollapsedChildTvCast, setIsCollapsedChildTvCast ] = useState(true);
+    const [isCollapsedChildTvCrew, setIsCollapsedChildTvCrew ] = useState(true);
 
     
 
@@ -34,10 +39,13 @@ function PersonShow({ route }){
         setLoading(true);
         (async () => {
                     const inf = await axios.get(`${url}person/${id}?api_key=${API_KEY}&language=fr-FR&append_to_response=credits`);
-
+                    https://api.themoviedb.org/3/person/15344/tv_credits?api_key=6a0bc0546f0c4bea10345001c61a431f&language=fr-FR
                     setInfos(inf.data);
                     setCast(inf.data.credits.cast);
                     setCrew(inf.data.credits.crew);
+                    const req_tvCredits= await axios.get(`${url}person/${id}/tv_credits?api_key=${API_KEY}&language=fr-FR`);
+                    setTvCast(req_tvCredits.data.cast);
+                    setTvCrew(req_tvCredits.data.crew);
                     setLoading(false);
             })();
     }, []);
@@ -67,10 +75,32 @@ function PersonShow({ route }){
             : <Text  style={[tw.pT2, tw.fontBold, tw.text2xl , {marginBottom: 15, textAlign: "center"}]}>Pas de nom</Text> }
             { infos.profile_path && ( 
                 <View style={[tw.selfCenter]}>
+                    <TouchableHighlight onPress={() => setModal(!modal)}>
                     <Image
-                        source={{ uri: `https://image.tmdb.org/t/p/w150_and_h225_bestv2${infos.profile_path}`}}
-                        style={[{width: 300, height: 300, resizeMode: "contain", paddingBottom: 10}]}
+                        source={{ uri: `https://image.tmdb.org/t/p/w300${infos.profile_path}`}}
+                        style={{ width: 200, height: 300, padding: 0, resizeMode: "contain" }}
                     />
+                    </TouchableHighlight>
+                    <Modal
+                        animationType="fade"
+                        style={[tw.bgGrey900]}
+                        visible={modal}
+                    >
+                        <View style={[styles.modalCenteredView]}>
+                            <TouchableHighlight
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModal(!modal)}
+                            >
+                                <Text style={styles.textStyle}>Fermer</Text>
+                            </TouchableHighlight>
+                            <View style={{elevation: 5, width: '100%', height: "100%"}}>
+                                <Image
+                                    source={{ uri: `https://image.tmdb.org/t/p/original${infos.profile_path}`}}
+                                    style={{ width: '100%', height: "100%", padding: 0, resizeMode: "contain" }}
+                                />
+                            </View>
+                        </View>
+                    </Modal>
                 </View>
             )}
             <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>{ infos.birthday ? infos.birthday.split('-').reverse().join('/') : ' - '}{!infos.deathday && infos.birthday ? `(${(age(infos.birthday.split('-')[0]))} ans)` : ''}</Text>
@@ -113,7 +143,6 @@ function PersonShow({ route }){
                                     <Text style={[tw.textCenter, tw.fontBold]}>Rôle</Text>
                                     <Text style={[tw.textCenter]}>{item.character}</Text>
                                 </>)}
-                                {console.log(item)}
                             {item.release_date ? (
                                 <View>
                                     <Text style={[tw.textCenter, tw.fontBold]}>Année de sortie</Text>
@@ -131,33 +160,119 @@ function PersonShow({ route }){
                 ))}
             </>
             )}
-            {(cast.length || crew.length) && (
+            {(cast.length || crew.length || tvCast.length || tvCrew.length) && (
                 <View style={[tw.pB10]}>
-                    <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.textCenter]}>Toute sa filmographie ({cast.length+crew.length})</Text>
-                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2]}>
-                        <Text style={[ tw.bgGreen500, styles.button, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>En tant qu'acteur ({cast.length})</Text>
+                    <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.textCenter]}>Toute sa filmographie ({cast.length+crew.length+tvCrew.length+tvCast.length})</Text>
+                    <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>En tant qu'acteur ({cast.length+tvCast.length})</Text>
+
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[ tw.bgGreen500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>Dans un film ({cast.length})</Text>
                     </TouchableOpacity>
                     {cast.length > 0 && (
                     <Collapsible collapsed={isCollapsedChildCast}>
+                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                         {cast.length && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
-                            <View key={item.id*index} style={[tw.p1]}>
-                                <Text style={[ tw.textCenter]}><Text style={[tw.fontBold]}>{item.title}</Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}{"\n"}<Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
+                            <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('FilmShow', {
+                                                id: item.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.title}</Text>
+                                    </TouchableOpacity><Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}</Text>
+                                </View>
+                                <Text style={[tw.textCenter]}><Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
                                 <RenderSeparator/>
                             </View>
                         ))}
+                        </View>
                     </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8}>
-                        <Text style={[tw.bgGreen500, styles.button, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Dans l'équipe technique ou de production ({crew.length})</Text>
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[ tw.bgTeal500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildTvCast(!isCollapsedChildTvCast)}>Dans une série ({tvCast.length})</Text>
+                    </TouchableOpacity>
+                    {tvCast.length > 0 && (
+                    <Collapsible collapsed={isCollapsedChildTvCast}>
+                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
+                        {tvCast.length && tvCast.sort(function(a, b){return new Date(b.first_air_date) - new Date(a.first_air_date)}).map((item, index) => (
+                            <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('SerieShow', {
+                                                id: item.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.name}</Text>
+                                    </TouchableOpacity><Text>{item.first_air_date ? ` en ${item.first_air_date.split('-')[0]}` : ''}</Text>
+                                </View>
+                                <Text style={[tw.textCenter]}><Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
+                                <RenderSeparator/>
+                            </View>
+                        ))}
+                        </View>
+                    </Collapsible>
+                    )}
+                    <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>Dans l'équipe technique ou de production ({crew.length+tvCrew.length})</Text>
+
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[tw.bgGreen500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Films ({crew.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
                         <Collapsible collapsed={isCollapsedChildCrew}>
+                            <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                             {crew.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
-                                <View key={item.id*index} style={[tw.p1]}>
-                                    <Text style={[ tw.textCenter]}><Text style={[tw.fontBold]}>{item.title}</Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}{"\n"}{item.job ?? ' - '}</Text>
-                                    <RenderSeparator/>
+                                <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('FilmShow', {
+                                                id: item.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.title}</Text>
+                                    </TouchableOpacity><Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}</Text>
                                 </View>
+                                <Text style={[tw.textCenter]}>{item.job ?? ' - '}</Text>
+                                <RenderSeparator/>
+                            </View>
                             ))}
+                            </View>
+                        </Collapsible>
+                    )}
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                        <Text style={[tw.bgTeal500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildTvCrew(!isCollapsedChildTvCrew)}>Séries ({tvCrew.length})</Text>
+                    </TouchableOpacity>
+                    {tvCrew.length > 0 && (
+                        <Collapsible collapsed={isCollapsedChildTvCrew}>
+                            <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
+                            {tvCrew.sort(function(a, b){return new Date(b.first_air_date) - new Date(a.first_air_date)}).map((item, index) => (
+                                <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                    <TouchableOpacity
+                                        activeOpacity={0.8}
+                                        onPress={() => {
+                                            navigation.push('SerieShow', {
+                                                id: item.id
+                                            });
+                                        }}
+                                    >
+                                        <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.name}</Text>
+                                    </TouchableOpacity><Text>{item.first_air_date ? ` en ${item.first_air_date.split('-')[0]}` : ''}</Text>
+                                </View>
+                                <Text style={[tw.textCenter]}>{item.job ?? ' - '}</Text>
+                                <RenderSeparator/>
+                            </View>
+                            ))}
+                            </View>
                         </Collapsible>
                     )}
                 </View>
@@ -170,6 +285,7 @@ function PersonShow({ route }){
 
 export default PersonShow;
 
+
 const styles = StyleSheet.create({
     centeredView: {
       flex: 1,
@@ -177,23 +293,22 @@ const styles = StyleSheet.create({
       alignItems: "center",
       padding: 5
     },
-    modalView: {
-      margin: 10,
-      backgroundColor: "white",
+    modalCenteredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 5,
+        backgroundColor: "#1a202c",
+        paddingTop: 30,
+    },
+    otherButton: {
       borderRadius: 20,
       padding: 10,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5
+      elevation: 2
     },
     button: {
-      borderRadius: 20,
+    //   borderRadius: 20,
+
       padding: 10,
       elevation: 2
     },
@@ -201,15 +316,21 @@ const styles = StyleSheet.create({
       backgroundColor: "#F194FF",
     },
     buttonClose: {
-      backgroundColor: "#2196F3",
+    //   backgroundColor: "#2196F3",
+    // marginTop: 100,
+    // marginBottom: -50,
+    borderWidth: 1,
+    borderColor: 'white',
+    elevation: 6, 
     },
     textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center"
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        // marginBottom: -50,
     },
     modalText: {
-      marginBottom: 15,
+    //   marginBottom: 15,
       textAlign: "center"
     }
   });

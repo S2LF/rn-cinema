@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from "react";
-import { Image, Text, View, ActivityIndicator, TouchableOpacity} from "react-native";
+import { Image, Text, View, ActivityIndicator, TouchableOpacity, TouchableHighlight, Modal, StyleSheet} from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
 import { tw } from 'react-native-tailwindcss';
@@ -18,6 +18,7 @@ function PersonRow({name, profile_path, index, id, known_for}){
     const [infos, setInfos] = useState([]);
     const [cast, setCast] = useState([]);
     const [crew, setCrew] = useState([]);
+    const [modal, setModal] = useState(false);
 
 
     const url = 'https://api.themoviedb.org/3/';
@@ -34,7 +35,7 @@ function PersonRow({name, profile_path, index, id, known_for}){
     
     let mainFilmsFilter = [];
 
-    if(known_for.length){
+    if(known_for.length > 0){
         known_for.forEach(element => {
             let el = cast.filter((e) => {return e.id == element.id });
             mainFilmsFilter.push(el[0]);
@@ -54,22 +55,48 @@ function PersonRow({name, profile_path, index, id, known_for}){
             <Text style={[tw.textBlack, tw.textCenter, tw.text2xl, tw.pB2, tw.pT2, tw.fontBold]}>{name}</Text>
             <View style={[ tw.wFull, tw.flexRow, (index % 2) && tw.flexRowReverse]}>
                 {!profile_path ? (
-                    <Image
-                        source={DEFAULT_USER_POSTER}
-                        style={{ width: 150, height: 150, resizeMode: "contain" }}
-                    />
+                    <View style={{margin: 20}}>
+                        <Image
+                            source={DEFAULT_USER_POSTER}
+                            style={{ width: 120, height: 180, resizeMode: "contain" }}
+                        />
+                    </View>
                 ) : (
-                    <Image
-                        source={{ uri: `https://image.tmdb.org/t/p/w150_and_h225_bestv2${profile_path}`}}
-                        style={{ width: 150, height: 150, padding: 0, resizeMode: "contain" }}
-                    />
+                    <View style={{margin: 20}}>
+                        <TouchableHighlight onPress={() => setModal(!modal)}>
+                            <Image
+                                source={{ uri: `https://image.tmdb.org/t/p/w150_and_h225_bestv2${profile_path}`}}
+                                style={{ width: 120, height: 180, padding: 0, resizeMode: "contain" }}
+                            />
+                        </TouchableHighlight>
+                        <Modal
+                            animationType="fade"
+                            style={[tw.bgGrey900]}
+                            visible={modal}
+                        >
+                            <View style={[styles.centeredView]}>
+                                <TouchableHighlight
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => setModal(!modal)}
+                                >
+                                    <Text style={styles.textStyle}>Fermer</Text>
+                                </TouchableHighlight>
+                                <View style={{elevation: 5, width: '100%', height: "100%"}}>
+                                    <Image
+                                        source={{ uri: `https://image.tmdb.org/t/p/original${profile_path}`}}
+                                        style={{ width: '100%', height: "100%", padding: 0, resizeMode: "contain" }}
+                                    />
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
                 )}
-                <View style={[tw.flex1, tw.alignCenter, tw.justifyAround, tw.pL2, tw.pR2]}>
+                <View style={[tw.flex1, tw.alignCenter, tw.justifyBetween, tw.pL2, tw.pR2]}>
                     <Text><Text style={[tw.underline]}>Né(e) le</Text>: { infos.birthday ? infos.birthday.split('-').reverse().join('/') : ' - '} {!infos.deathday && infos.birthday ? `(${(age(infos.birthday.split('-')[0]))} ans)` : ''}</Text>
                     { infos.deathday ? <Text><Text style={[tw.underline]}>Décès le</Text>: { infos.deathday ? infos.deathday.split('-').reverse().join('/') : ' - '}</Text> : <Text>{''}</Text>}
 
                     <View>
-                            <Text><Text style={[tw.underline]}>Connus pour</Text><Text> :</Text></Text>
+                            <Text><Text style={[tw.underline]}>Connu(e)s pour</Text><Text> :</Text></Text>
                             { known_for && known_for.map((el) => (
                                 (el.media_type) === "tv" ? 
                                 (
@@ -102,12 +129,12 @@ function PersonRow({name, profile_path, index, id, known_for}){
                             )) 
                             }
                     </View>
-                    <TouchableOpacity activeOpacity={0.8} style={[tw.pT2, tw.bgGreen400, tw.p1,tw.itemsCenter, tw.rounded]} onPress={() => {
+                    <TouchableHighlight underlayColor={'#38a169'} activeOpacity={0.8} style={[tw.mT2, tw.bgGreen400, tw.p1,tw.itemsCenter, tw.rounded]} onPress={() => {
                         // setModalVisible(true);
                         navigation.push('PersonShow', {
                             id: id
                         });
-                    }}><Text style={[tw.textWhite, tw.fontBold]}>En savoir +</Text></TouchableOpacity>
+                    }}><Text style={[tw.textWhite, tw.fontBold]}>En savoir +</Text></TouchableHighlight>
                 </View>
             </View>
             </>
@@ -117,3 +144,54 @@ function PersonRow({name, profile_path, index, id, known_for}){
 }
 
 export default PersonRow;
+
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 5,
+        backgroundColor: "#1a202c",
+        paddingTop: 30,
+    },
+    modalView: {
+    //   backgroundColor: "white",
+
+    //   borderRadius: 20,
+    //   padding: 10,
+    //   shadowColor: "#000",
+    //   shadowOffset: {
+    //     width: 0,
+    //     height: 2
+    //   },
+    //   shadowOpacity: 0.25,
+    //   shadowRadius: 4,
+    },
+    button: {
+    //   borderRadius: 20,
+
+      padding: 10,
+      elevation: 2
+    },
+    buttonOpen: {
+      backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+    //   backgroundColor: "#2196F3",
+    // marginTop: 100,
+    // marginBottom: -50,
+    borderWidth: 1,
+    borderColor: 'white',
+    elevation: 6, 
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center",
+        // marginBottom: -50,
+    },
+    modalText: {
+    //   marginBottom: 15,
+      textAlign: "center"
+    }
+  });
