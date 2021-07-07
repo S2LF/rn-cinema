@@ -7,10 +7,11 @@ import ReadMore from '@fawazahmed/react-native-read-more';
 import age from 's-age';
 import Collapsible from "react-native-collapsible";
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from "react-native-gesture-handler";
 
+import { LOGO } from '../assets/img/index';
 import { DEFAULT_MOVIE_POSTER } from '../assets/img/index';
 import RenderSeparator from "./RenderSeparator";
-import { ScrollView } from "react-native-gesture-handler";
 
 function PersonShow({ route }){
 
@@ -64,7 +65,8 @@ function PersonShow({ route }){
         { loading ? (
             <>
                 <View style={[ tw.selfCenter, {flex: 1, justifyContent: "center", padding: 10 }]}>
-                    <Text style={[tw.textXl, tw.fontBold]}>Chargement...</Text>
+                    <Image source={ LOGO } style={{ width: 150, height: 150, resizeMode: "contain" }} />
+                    <Text style={[tw.textXl, tw.fontBold, tw.selfCenter, tw.pB2]}>Chargement...</Text>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             </>
@@ -161,19 +163,19 @@ function PersonShow({ route }){
             </>
             )}
             {(cast.length || crew.length || tvCast.length || tvCrew.length) && (
-                <View style={[tw.pB10]}>
+                <View style={[tw.pB10, tw.selfCenter]}>
                     <Text style={[tw.mT4, tw.fontBold,tw.textXl, tw.textCenter]}>Toute sa filmographie ({cast.length+crew.length+tvCrew.length+tvCast.length})</Text>
-                    <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>En tant qu'acteur ({cast.length+tvCast.length})</Text>
+                    <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>En tant qu'acteur·rice ({cast.length+tvCast.length})</Text>
 
-                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
-                        <Text style={[ tw.bgGreen500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>Dans un film ({cast.length})</Text>
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2]}>
+                        <Text style={[ tw.bgGreen500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={() => setIsCollapsedChildCast(!isCollapsedChildCast)}>Dans un film ({cast.length})</Text>
                     </TouchableOpacity>
                     {cast.length > 0 && (
                     <Collapsible collapsed={isCollapsedChildCast}>
-                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
+                
                         {cast.length && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
-                            <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
-                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                            <View key={item.id*index}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.selfCenter, tw.justifyCenter, tw.flexWrap]}>
                                     <TouchableOpacity
                                         activeOpacity={0.8}
                                         onPress={() => {
@@ -182,24 +184,23 @@ function PersonShow({ route }){
                                             });
                                         }}
                                     >
-                                        <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.title}</Text>
-                                    </TouchableOpacity><Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}</Text>
+                                        <Text style={[tw.fontBold, tw.textBlue600]}>{item.title}</Text>
+                                    </TouchableOpacity>
+                                    <Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}</Text>
                                 </View>
-                                <Text style={[tw.textCenter]}><Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
+                                <Text style={[tw.textCenter]}> <Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
                                 <RenderSeparator/>
                             </View>
                         ))}
-                        </View>
                     </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
-                        <Text style={[ tw.bgTeal500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildTvCast(!isCollapsedChildTvCast)}>Dans une série ({tvCast.length})</Text>
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2 ]}>
+                        <Text style={[ tw.bgTeal500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={() => setIsCollapsedChildTvCast(!isCollapsedChildTvCast)}>Dans une série ({tvCast.length})</Text>
                     </TouchableOpacity>
                     {tvCast.length > 0 && (
                     <Collapsible collapsed={isCollapsedChildTvCast}>
-                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                         {tvCast.length && tvCast.sort(function(a, b){return new Date(b.first_air_date) - new Date(a.first_air_date)}).map((item, index) => (
-                            <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                            <View key={item.id*index}>
                                 <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
                                     <TouchableOpacity
                                         activeOpacity={0.8}
@@ -210,26 +211,24 @@ function PersonShow({ route }){
                                         }}
                                     >
                                         <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.name}</Text>
-                                    </TouchableOpacity><Text>{item.first_air_date ? ` en ${item.first_air_date.split('-')[0]}` : ''}</Text>
+                                    </TouchableOpacity>
+                                    <Text>{item.first_air_date ? ` en ${item.first_air_date.split('-')[0]}` : ''}</Text>
+                                    <Text style={[tw.textCenter]}> <Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
                                 </View>
-                                <Text style={[tw.textCenter]}><Text style={[tw.underline]}>Rôle</Text> : {item.character ?? ' - '}</Text>
                                 <RenderSeparator/>
                             </View>
                         ))}
-                        </View>
                     </Collapsible>
                     )}
                     <Text style={[tw.mT4, tw.fontBold,tw.textLg, tw.textCenter]}>Dans l'équipe technique ou de production ({crew.length+tvCrew.length})</Text>
-
-                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2]}>
                         <Text style={[tw.bgGreen500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Films ({crew.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
                         <Collapsible collapsed={isCollapsedChildCrew}>
-                            <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                             {crew.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
-                                <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
-                                <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
+                                <View key={item.id*index}>
+                                <View style={[tw.flexRow, tw.alignCenter, tw.selfCenter, tw.justifyCenter, tw.flexWrap]}>
                                     <TouchableOpacity
                                         activeOpacity={0.8}
                                         onPress={() => {
@@ -241,21 +240,19 @@ function PersonShow({ route }){
                                         <Text style={[tw.fontBold, tw.textBlue600, tw.textCenter]}>{item.title}</Text>
                                     </TouchableOpacity><Text>{item.release_date ? ` en ${item.release_date.split('-')[0]}` : ''}</Text>
                                 </View>
-                                <Text style={[tw.textCenter]}>{item.job ?? ' - '}</Text>
+                                    <Text style={[tw.textCenter]}>{item.job ?? ' - '}</Text>
                                 <RenderSeparator/>
                             </View>
                             ))}
-                            </View>
                         </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                    <TouchableOpacity activeOpacity={0.8} style={[ tw.p2, tw.m2]}>
                         <Text style={[tw.bgTeal500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildTvCrew(!isCollapsedChildTvCrew)}>Séries ({tvCrew.length})</Text>
                     </TouchableOpacity>
                     {tvCrew.length > 0 && (
                         <Collapsible collapsed={isCollapsedChildTvCrew}>
-                            <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                             {tvCrew.sort(function(a, b){return new Date(b.first_air_date) - new Date(a.first_air_date)}).map((item, index) => (
-                                <View key={item.id*index} style={[tw.p1, tw.textCenter]}>
+                                <View key={item.id*index}>
                                 <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
                                     <TouchableOpacity
                                         activeOpacity={0.8}
@@ -272,7 +269,6 @@ function PersonShow({ route }){
                                 <RenderSeparator/>
                             </View>
                             ))}
-                            </View>
                         </Collapsible>
                     )}
                 </View>

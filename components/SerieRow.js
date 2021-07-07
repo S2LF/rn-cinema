@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import { Image, Text, View, ActivityIndicator, TouchableOpacity, StyleSheet, Modal, TouchableHighlight } from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
@@ -79,7 +78,7 @@ function SerieRow({poster_path, title, release_date, index, id}){
                 )}
                 <View style={[tw.flex1, tw.alignCenter, tw.justifyAround, tw.pL2, tw.pR2]}>
                     <Text><Text style={[tw.underline]}>Année de sortie</Text>: {release_date && release_date.split('-')[0]}</Text>
-                    <Text><Text style={[tw.underline]}>Créateur(s)</Text>:</Text>
+                    <Text><Text style={[tw.underline]}>Créateur·rice·s</Text>:</Text>
                     {infos.created_by.length > 0 ? infos.created_by.map((el) => (
                         <View  key={el.id} style={tw.flexRow}>
                             <TouchableOpacity

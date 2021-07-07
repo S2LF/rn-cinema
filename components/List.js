@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, FlatList, ActivityIndicator, Image } from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
 import { tw } from 'react-native-tailwindcss';
@@ -10,6 +9,7 @@ import PersonRow from "./PersonRow";
 import SerieRow from './SerieRow';
 import RenderSeparator from "./RenderSeparator";
 
+import { LOGO } from '../assets/img/index';
 
 
 function List({ route }) {
@@ -46,12 +46,14 @@ function List({ route }) {
         })();
     }, []);
 
-    console.log('search', search, 'type', type)
+    // console.log('search', search, 'type', type)
     return (
     <>
     { loading ? (
         <>
-            <View style={{flex: 1, justifyContent: "center", flexDirection: "row", justifyContent: "space-around", padding: 10 }}>
+            <View style={{flex: 1, justifyContent: "center", alignSelf:'center', padding: 10 }}>
+                <Image source={ LOGO } style={{ width: 150, height: 150, resizeMode: "contain" }} />
+                <Text style={[tw.textXl, tw.fontBold, tw.selfCenter]}>Chargement...</Text>
                 <ActivityIndicator  size="large" color="#0000ff"/>
             </View>
         </>

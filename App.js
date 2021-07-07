@@ -1,6 +1,5 @@
-import { Picker } from '@react-native-picker/picker';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -28,7 +27,7 @@ export default function App() {
                     }}
                     title="Accueil" /></View>)
         })} initialRouteName="Home">
-            <Stack.Screen name="Home" component={Home}  options={{ title:'Accueil', headerStyle: { backgroundColor: '#fbd38d', } }} />
+            <Stack.Screen name="Home" component={Home}  options={{ title:'Accueil', headerStyle: { backgroundColor: '#feebc8', } }} />
             <Stack.Screen name="List" component={List} options={{ title:'Recherche', headerStyle: { shadowOffset: 0 } }} />
             <Stack.Screen name="FilmShow" component={FilmShow} options={{ title:'Détails du film', headerStyle: { shadowOffset: 0 } }} />
             <Stack.Screen name="SerieShow" component={SerieShow} options={{ title:'Détails de la série', headerStyle: { shadowOffset: 0 } }} />

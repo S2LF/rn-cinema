@@ -92,11 +92,11 @@ function PersonRow({name, profile_path, index, id, known_for}){
                     </View>
                 )}
                 <View style={[tw.flex1, tw.alignCenter, tw.justifyBetween, tw.pL2, tw.pR2]}>
-                    <Text><Text style={[tw.underline]}>Né(e) le</Text>: { infos.birthday ? infos.birthday.split('-').reverse().join('/') : ' - '} {!infos.deathday && infos.birthday ? `(${(age(infos.birthday.split('-')[0]))} ans)` : ''}</Text>
+                    <Text><Text style={[tw.underline]}>Né·e le</Text>: { infos.birthday ? infos.birthday.split('-').reverse().join('/') : ' - '} {!infos.deathday && infos.birthday ? `(${(age(infos.birthday.split('-')[0]))} ans)` : ''}</Text>
                     { infos.deathday ? <Text><Text style={[tw.underline]}>Décès le</Text>: { infos.deathday ? infos.deathday.split('-').reverse().join('/') : ' - '}</Text> : <Text>{''}</Text>}
 
                     <View>
-                            <Text><Text style={[tw.underline]}>Connu(e)s pour</Text><Text> :</Text></Text>
+                            <Text><Text style={[tw.underline]}>Connu·e·s pour</Text><Text> :</Text></Text>
                             { known_for && known_for.map((el) => (
                                 (el.media_type) === "tv" ? 
                                 (

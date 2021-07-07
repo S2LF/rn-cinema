@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Text, View, ActivityIndicator, TouchableOpacity, ScrollView, StyleSheet, Modal, TouchableHighlight } from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
 import { tw } from 'react-native-tailwindcss';
 import Collapsible from "react-native-collapsible";
 import { useNavigation } from '@react-navigation/native';
+import ReadMore from "@fawazahmed/react-native-read-more";
 
-import { DEFAULT_MOVIE_POSTER } from '../assets/img/index';
+import { LOGO } from '../assets/img/index';
 import { DEFAULT_USER_POSTER } from '../assets/img/index';
 import RenderSeparator from "./RenderSeparator";
-import ReadMore from "@fawazahmed/react-native-read-more";
 
 
 export default function SerieShow({ route }){
@@ -49,7 +48,8 @@ export default function SerieShow({ route }){
         { loading ? (
             <>
                 <View style={[ tw.selfCenter, {flex: 1, justifyContent: "center", padding: 10 }]}>
-                    <Text style={[tw.textXl, tw.fontBold]}>Chargement...</Text>
+                    <Image source={ LOGO } style={{ width: 150, height: 150, resizeMode: "contain" }} />
+                    <Text style={[tw.textXl, tw.fontBold, tw.selfCenter, tw.pB2]}>Chargement...</Text>
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             </>
@@ -105,7 +105,7 @@ export default function SerieShow({ route }){
                     <Text key={item.iso_3166_1}>{item.name}</Text>
                 ))
             : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Créateur(s)</Text>
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Créateur·rice·s</Text>
             {infos.created_by.length > 0 ? infos.created_by.map((el) => (
                 <View key={el.id} style={[tw.mT2, tw.wFull, tw.textCenter, tw.alignCenter]}>
                     <View style={[tw.selfCenter]}>
@@ -130,7 +130,7 @@ export default function SerieShow({ route }){
                     </TouchableOpacity>
                 </View>
             )) : <Text> - </Text>}
-            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Acteurs principaux</Text>
+            <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Acteur·rice·s principaux</Text>
             {cast.length > 0 ? cast.slice(0,3).map((item) => (
                 <View key={item.id} style={[tw.flex1, tw.alignCenter]}>
                     <View  style={[tw.mT2, tw.selfCenter]}>
@@ -172,12 +172,11 @@ export default function SerieShow({ route }){
             {(cast.length > 0 || crew.length > 0) && (
                 <View  style={[tw.pB10]}>
                     <Text style={[tw.mT4, tw.fontBold,tw.textXl]}>Casting, équipe technique et de production ({cast.length+crew.length})</Text>
-                    <TouchableOpacity activeOpacity={0.8}  style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                    <TouchableOpacity activeOpacity={0.8}  style={[ tw.p2, tw.m2]}>
                         <Text style={[ tw.bgGreen500, styles.otherButton, tw.w40, tw.selfCenter, tw.textWhite, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCast(!isCollapsedChildCast)}>Casting ({cast.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
                     <Collapsible collapsed={isCollapsedChildCast}>
-                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw.rounded ]} >
                         {cast.length > 0 && cast.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item) => (
                             <View key={item.id} style={[tw.p1, tw.textCenter]}>
                                 <View style={[tw.flexRow, tw.alignCenter, tw.justifyCenter, tw.flexWrap]}>
@@ -195,14 +194,12 @@ export default function SerieShow({ route }){
                                 <RenderSeparator/>
                             </View>
                         ))}
-                        </View>
                     </Collapsible>
                     )}
-                    <TouchableOpacity activeOpacity={0.8}   style={[ tw.p2, tw.m2, tw._mB4, tw.z10 ]}>
+                    <TouchableOpacity activeOpacity={0.8}   style={[ tw.p2, tw.m2]}>
                         <Text style={[tw.bgGreen500, styles.otherButton, tw.w50, tw.textWhite, tw.selfCenter, tw.fontBold, tw.textCenter]} onPress={(e) => setIsCollapsedChildCrew(!isCollapsedChildCrew)}>Équipe technique et de production ({crew.length})</Text>
                     </TouchableOpacity>
                     {crew.length > 0 && (
-                        <View style={[tw.border, tw.borderGreen600, tw.bgWhite, tw.pT5, tw._mT4, tw.rounded ]} >
                         <Collapsible collapsed={isCollapsedChildCrew}>
                             {crew.sort(function(a, b){return new Date(b.release_date) - new Date(a.release_date)}).map((item, index) => (
                                 <View key={item.id*index}>
@@ -223,7 +220,6 @@ export default function SerieShow({ route }){
                                 </View>
                             ))}
                         </Collapsible>
-                        </View>
                     )}
                 </View>
             )}

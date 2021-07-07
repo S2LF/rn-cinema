@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Text, View, ActivityIndicator, TouchableOpacity, TouchableHighlight, Modal, Pressable, StyleSheet} from "react-native";
 import {API_KEY} from "@env"
 import axios from "axios";
@@ -84,7 +83,7 @@ function FilmRow({ poster_path, title, release_date, index, id}){
                 )}
                 <View style={[tw.flex1, tw.alignCenter, tw.justifyAround, tw.pL2, tw.pR2]}>
                     <Text><Text style={[tw.underline]}>Année de sortie</Text>: {release_date && release_date.split('-')[0]}</Text>
-                    <View style={[tw.flexRow, tw.alignCenter]}><Text style={[tw.underline]}>Réalisateur</Text><Text>:</Text>
+                    <View style={[tw.flexRow, tw.alignCenter]}><Text style={[tw.underline]}>Réalisateur·rice·s</Text><Text>:</Text>
                     {producer.length > 0 ? (
                             <TouchableOpacity
                                 activeOpacity={0.8}
