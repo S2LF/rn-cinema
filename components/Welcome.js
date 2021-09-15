@@ -31,11 +31,11 @@ export default function Welcome({ visible }){
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-          <Text style={[tw.text2xl]}>Bienvenue sur</Text>
-          <Text style={[{fontFamily: 'GreatVibes_400Regular'}, tw.text4xl, tw.pB2]}> Il était un film </Text>
-        <Text style={[tw.pB2]}>Merci d'avoir téléchargé cette application !</Text>
-        <Text>L'utilisation est simple, il suffit de taper le nom d'un film, d'une série ou d'une personne...</Text>
-        <Text style={[tw.pT5, tw.fontBold]}>A bientôt !</Text>
+            <Text style={[tw.text2xl]}>Bienvenue sur</Text>
+            <Text style={[{fontFamily: 'GreatVibes_400Regular'}, tw.text4xl, tw.pB2]}> Il était un film </Text>
+            <Text style={[tw.pB2]}>Merci d'avoir téléchargé cette application !</Text>
+            <Text>L'utilisation est simple, il suffit de taper le nom d'un film, d'une série ou d'une personne...</Text>
+            <Text style={[tw.pT5, tw.fontBold]}>A bientôt !</Text>
             <Pressable
               style={[styles.button, styles.buttonClose, tw.mT5]}
               onPress={() => setModalVisible(!modalVisible)}
