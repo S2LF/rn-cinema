@@ -31,8 +31,7 @@ function List({ route }) {
                     // Make a try/catch for the request
                     try {
                         resultFilm = await axios.get(`${url}search/movie?api_key=${API_KEY}&query=${search}&language=fr-FR`);
-                        console.log(resultFilm.data.results);
-                        setResult('ICI');
+                        setResult(resultFilm.data.results);
                         setLoading(false);
                     } catch (error) {
                         console.log('error', error);
@@ -41,7 +40,6 @@ function List({ route }) {
 
                     // const resultFilm = await axios.get(`${url}search/movie?api_key=${API_KEY}&query=${search}&language=fr-FR`);
                     // Make request for movies with a query with fetch*
-                    console.log('OK');
                     // const resultFilm = await fetch(`${url}search/movie?api_key=${API_KEY}&query=${search}&language=fr-FR`)
                     // .then((response) => response.json())
                     // .then((json) => {
@@ -51,11 +49,12 @@ function List({ route }) {
 
 
                     // console.log(resultFilm.data.results);
-                    setResult(resultFilm.data.results);
+                    
                     setLoading(false);
                     break;
                 case 'Personne':
                     try {
+                        console.log("5")
                         const resultPerson = await axios.get(`${url}search/person?api_key=${API_KEY}&query=${search}&language=fr-FR`);
                         setResult(resultPerson.data.results);
                         setLoading(false);
@@ -65,6 +64,7 @@ function List({ route }) {
                     break;
                 case 'Série':
                     try {
+                        console.log("6")
                         const resultSerie = await axios.get(`${url}search/tv?api_key=${API_KEY}&query=${search}&language=fr-FR`);
                         setResult(resultSerie.data.results);
                         setLoading(false);
@@ -93,7 +93,6 @@ function List({ route }) {
                 (type === "Film") ? (
                     <>
                         {/* Make console log in react render */}
-                        {console.log('result')}
                         <View style={[tw.shadow, tw.bgWhite, tw.p2]} >
                             <Text style={[tw.textCenter]}>{type} : {search}</Text>
                         </View>

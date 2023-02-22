@@ -20,17 +20,17 @@ function FilmRow({ poster_path, title, release_date, index, id }) {
 
     useEffect(() => {
         setLoading(true);
-        try {
-            (async () => {
+
+        (async () => {
+            try {
                 const inf = await axios.get(`${url}movie/${id}?api_key=${API_KEY}&language=fr-FR&append_to_response=credits`);
                 setInfos(inf.data);
                 setCrew(inf.data.credits.crew);
                 setLoading(false);
-                console.log('ici');
-            })();
-        } catch (error) {
-            console.log('error', error);
-        }
+            } catch (error) {
+                console.log('error', error);
+            }
+        })();
     }, []);
 
     let producer = crew.filter((el) => (
